@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fjellsten Agency (v2)</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="v2.css">
+</head>
+
+<body>
+
+    <!-- Hero -->
+    <header class="section hero">
+        <div class="container">
+            <div class="hero-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <h1
+                    style="font-family: 'Playfair Display', serif; font-size: 4.5rem; line-height: 1.1; margin-bottom: 20px; color: #fff;">
+                    Fjellsten <span style="color: var(--accent-gold); font-style: italic;">Agency</span>
+                </h1>
+                <p style="font-size: 1.25rem; color: #a0a5b0; margin-bottom: 40px; font-weight: 300;">
+                    Connecting Talent & Brands
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <a href="#contact" class="btn">Get Started</a>
+                    <a href="#about" class="btn"
+                        style="background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);">Learn
+                        More</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About / Info Cards -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px; font-size: 2rem;">Key Focus Areas</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="number">01</span>
+                    <h3>Targeted Influence</h3>
+                    <p>We identify creators who frequently post high-quality content that draws consistent attention.
+                        All
+                        the creators' content is strongly connected to a niche, allowing brands and products to
+                        advertise seamlessly. This enables authentic content and advertising to work together.</p>
+                </div>
+                <div class="card">
+                    <span class="number">02</span>
+                    <h3>Strategic Direction</h3>
+                    <p>We provide individual tips on where and how often to advertise while maintaining authenticity and
+                        community trust. This allows creators to maximize profits on the attention they are receiving
+                        without reducing the quality of their content.</p>
+                </div>
+                <div class="card">
+                    <span class="number">03</span>
+                    <h3>Brand Integrity</h3>
+                    <p>Before recruiting a creator we ensure that their previous content holds high standards. Then we
+                        make
+                        sure they receive information on what restrictions they need to consider. We
+                        frequently review creators' content for the safety of your brand.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Creators -->
+    <section class="section">
+        <div class="container grid">
+            <div class="image-box">
+                <img src="images/creator_tennis.jpg" alt="Creator Studio - Tennis">
+            </div>
+            <div>
+                <h2>For Creators</h2>
+                <p>Turn your passion into a business. We handle contracts, negotiations and partnerships so you can
+                    focus on creating.</p>
+                <ul style="list-style: none; margin-bottom: 20px;">
+                    <li style="margin-bottom: 10px;">◆ Networking</li>
+                    <li style="margin-bottom: 10px;">◆ Deal Management</li>
+                    <li style="margin-bottom: 10px;">◆ Additional Income</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Brands -->
+    <section class="section">
+        <div class="container grid">
+            <div>
+                <h2>For Brands</h2>
+                <p>Stop spraying, start aiming. Reach highly intentional audiences through our vetted network. We turn
+                    niche attention into measurable brand growth.</p>
+                <ul style="list-style: none; margin-bottom: 20px;">
+                    <li style="margin-bottom: 10px;">◆ Brand-Safe</li>
+                    <li style="margin-bottom: 10px;">◆ High ROI</li>
+                    <li style="margin-bottom: 10px;">◆ Authentic Content</li>
+                </ul>
+            </div>
+            <div class="image-box">
+                <img src="images/brand_handshake.jpg" alt="Target Audience - Handshake">
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+        <div class="container" style="max-width: 600px; text-align: center;">
+            <h2>Contact Us</h2>
+            <p>Ready to level up? Send us a message.</p>
+            <form style="text-align: left;">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <select name="type">
+                    <option value="Creator">I am a Creator</option>
+                    <option value="Brand">I am a Brand</option>
+                </select>
+                <textarea name="message" rows="5" placeholder="Message" required></textarea>
+                <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
