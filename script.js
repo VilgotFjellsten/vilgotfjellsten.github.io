@@ -30,20 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    // Contact Form Handler (Mailto fallback)
-    const contactForm = document.querySelector('form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const name = this.querySelector('[name="name"]').value;
-            const email = this.querySelector('[name="email"]').value;
-            const type = this.querySelector('[name="type"]').value;
-            const message = this.querySelector('[name="message"]').value;
-
-            const subject = `New Inquiry from ${name} (${type})`;
-            const body = `Name: ${name}\nEmail: ${email}\nType: ${type}\n\nMessage:\n${message}`;
-
-            window.location.href = `mailto:vilgotfjellsten@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        });
-    }
-});
+   document.addEventListener('DOMContentLoaded', function () {
+    // Sidan är laddad och redo.
+    // Kontaktformuläret sköts nu direkt via HTML/Formspree.
+    console.log("Fjellsten Agency site loaded successfully.");
+});});
