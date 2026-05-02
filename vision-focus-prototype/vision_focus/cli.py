@@ -9,8 +9,8 @@ from vision_focus.pipeline import process_image
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Build a low-resolution overview plus a high-resolution focus crop "
-            "from an input image."
+            "Build low-resolution, high-resolution crop, and eye-like foveated "
+            "versions of an input image."
         )
     )
     parser.add_argument("input", type=Path, help="Path to an input image.")
@@ -45,7 +45,12 @@ def main() -> None:
     print(f"Original size: {result.original_size[0]}x{result.original_size[1]}")
     print(f"Low-res size: {result.low_res_size[0]}x{result.low_res_size[1]}")
     print(f"Focus box: {result.focus_box}")
-    print(f"Estimated pixel reduction: {result.estimated_pixel_reduction:.2f}x")
+    print(
+        "Overview-plus-crop pixel reduction: "
+        f"{result.estimated_overview_crop_pixel_reduction:.2f}x"
+    )
+    print(f"Foveated effective-detail reduction: {result.estimated_foveated_detail_reduction:.2f}x")
     print(f"Low-res overview: {result.low_res_path}")
     print(f"High-res crop: {result.focus_crop_path}")
+    print(f"Foveated full frame: {result.foveated_path}")
     print(f"Debug image: {result.debug_path}")

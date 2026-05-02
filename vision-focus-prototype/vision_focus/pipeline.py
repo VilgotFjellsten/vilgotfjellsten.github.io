@@ -13,11 +13,13 @@ class FocusResult:
 
     low_res_path: Path
     focus_crop_path: Path
+    foveated_path: Path
     debug_path: Path
     focus_box: tuple[int, int, int, int]
     original_size: tuple[int, int]
     low_res_size: tuple[int, int]
-    estimated_pixel_reduction: float
+    estimated_overview_crop_pixel_reduction: float
+    estimated_foveated_detail_reduction: float
 
 
 def process_image(
@@ -26,7 +28,7 @@ def process_image(
     low_res_width: int = 320,
     focus_fraction: float = 0.10,
 ) -> FocusResult:
-    """Create a low-res overview, a high-res focus crop, and a debug image."""
+    """Create low-res, crop, foveated, and debug versions of an image."""
 
     image = cv2.imread(str(input_path))
     if image is None:
@@ -45,29 +47,35 @@ def process_image(
     )
 
     crop = _crop_box(image, focus_box)
+    foveated_image, foveated_detail_budget = _build_foveated_image(image, focus_box)
     debug_image = _draw_focus_box(image, focus_box)
 
     low_res_path = output_dir / "low_res_overview.jpg"
     focus_crop_path = output_dir / "high_res_focus_crop.jpg"
+    foveated_path = output_dir / "foveated_frame.jpg"
     debug_path = output_dir / "debug_focus_box.jpg"
 
     cv2.imwrite(str(low_res_path), low_res)
     cv2.imwrite(str(focus_crop_path), crop)
+    cv2.imwrite(str(foveated_path), foveated_image)
     cv2.imwrite(str(debug_path), debug_image)
 
     low_h, low_w = low_res.shape[:2]
     original_pixels = width * height
     transmitted_pixels = (low_w * low_h) + (crop.shape[1] * crop.shape[0])
-    estimated_pixel_reduction = original_pixels / transmitted_pixels
+    estimated_overview_crop_pixel_reduction = original_pixels / transmitted_pixels
+    estimated_foveated_detail_reduction = original_pixels / foveated_detail_budget
 
     return FocusResult(
         low_res_path=low_res_path,
         focus_crop_path=focus_crop_path,
+        foveated_path=foveated_path,
         debug_path=debug_path,
         focus_box=focus_box,
         original_size=(width, height),
         low_res_size=(low_w, low_h),
-        estimated_pixel_reduction=estimated_pixel_reduction,
+        estimated_overview_crop_pixel_reduction=estimated_overview_crop_pixel_reduction,
+        estimated_foveated_detail_reduction=estimated_foveated_detail_reduction,
     )
 
 
@@ -140,6 +148,53 @@ def _choose_focus_box(
 def _crop_box(image: np.ndarray, box: tuple[int, int, int, int]) -> np.ndarray:
     left, top, right, bottom = box
     return image[top:bottom, left:right]
+
+
+def _build_foveated_image(
+    image: np.ndarray,
+    focus_box: tuple[int, int, int, int],
+) -> tuple[np.ndarray, float]:
+    """Keep the focus area sharp while lowering detail farther from the center."""
+
+    height, width = image.shape[:2]
+    left, top, right, bottom = focus_box
+    center_x = (left + right) // 2
+    center_y = (top + bottom) // 2
+
+    y_coords, x_coords = np.ogrid[:height, :width]
+    distance = np.sqrt((x_coords - center_x) ** 2 + (y_coords - center_y) ** 2)
+    max_distance = np.sqrt(max(center_x, width - center_x) ** 2 + max(center_y, height - center_y) ** 2)
+    normalized_distance = distance / max(max_distance, 1)
+
+    medium_detail = _downsample_then_restore(image, scale=0.50)
+    low_detail = _downsample_then_restore(image, scale=0.25)
+    peripheral_detail = _downsample_then_restore(image, scale=0.125)
+
+    medium_mask = normalized_distance > 0.18
+    low_mask = normalized_distance > 0.38
+    peripheral_mask = normalized_distance > 0.65
+
+    foveated = image.copy()
+    foveated[medium_mask] = medium_detail[medium_mask]
+    foveated[low_mask] = low_detail[low_mask]
+    foveated[peripheral_mask] = peripheral_detail[peripheral_mask]
+
+    # Estimate the amount of visual detail retained, where downsampling to 50%
+    # width and height is treated as keeping roughly 25% of original detail.
+    detail_weights = np.ones((height, width), dtype=np.float32)
+    detail_weights[medium_mask] = 0.50**2
+    detail_weights[low_mask] = 0.25**2
+    detail_weights[peripheral_mask] = 0.125**2
+    detail_budget = float(detail_weights.sum())
+    return foveated, detail_budget
+
+
+def _downsample_then_restore(image: np.ndarray, scale: float) -> np.ndarray:
+    height, width = image.shape[:2]
+    small_width = max(1, int(width * scale))
+    small_height = max(1, int(height * scale))
+    small = cv2.resize(image, (small_width, small_height), interpolation=cv2.INTER_AREA)
+    return cv2.resize(small, (width, height), interpolation=cv2.INTER_LINEAR)
 
 
 def _draw_focus_box(image: np.ndarray, box: tuple[int, int, int, int]) -> np.ndarray:

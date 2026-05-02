@@ -6,12 +6,13 @@ These notes are for thinking clearly about the product before spending serious m
 
 Many vision AI systems do not need every pixel of every frame at full resolution.
 
-The product idea is to send:
+The product idea is to send an eye-like version of the full scene:
 
-1. a low-resolution view of the whole scene, and
-2. one or more high-resolution focus regions that likely contain the most useful detail.
+1. highest detail near the focus point,
+2. medium detail around that focus area, and
+3. lower detail in the far periphery.
 
-If this keeps the useful information while reducing the amount of visual data sent to the main AI model, the system may become cheaper, faster, or both.
+This keeps the whole scene visible to the downstream AI, while spending the most resolution where detail is most likely to matter. If this preserves useful understanding while reducing the amount of visual detail processed, the system may become cheaper, faster, or both.
 
 ## First prototype goal
 
@@ -22,6 +23,7 @@ input image
   -> low-resolution overview
   -> focus-region selection
   -> high-resolution crop
+  -> foveated full-frame image
   -> debug image showing what was selected
 ```
 
@@ -32,6 +34,8 @@ input image
 - Does it preserve accuracy for the target task?
 - What important things does it miss?
 - Does it work better with one crop or multiple crops?
+- Does a foveated full-frame image perform better than separate overview-plus-crop input?
+- What resolution falloff best matches useful human-like clarity?
 - Should focus be based on saliency, motion, objects, model uncertainty, or task-specific rules?
 
 ## Patent-sensitive thinking
