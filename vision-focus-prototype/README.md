@@ -26,6 +26,12 @@ docs/product-notes.md    Product and patent-thinking notes
 
 ## Setup
 
+From this folder:
+
+```bash
+cd vision-focus-prototype
+```
+
 Create and activate a virtual environment:
 
 ```bash
