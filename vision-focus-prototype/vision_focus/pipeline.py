@@ -7,6 +7,12 @@ import cv2
 import numpy as np
 
 
+DEFAULT_HORIZONTAL_FOV_DEGREES = 90.0
+FOVEAL_PIXELS_PER_DEGREE = 94.0
+FOVEAL_ACUITY_RADIUS_DEGREES = 1.0
+ACUITY_E2_DEGREES = 2.0
+
+
 @dataclass(frozen=True)
 class FocusResult:
     """Paths and measurements produced by one focus-processing run."""
@@ -18,6 +24,9 @@ class FocusResult:
     focus_box: tuple[int, int, int, int]
     original_size: tuple[int, int]
     low_res_size: tuple[int, int]
+    horizontal_fov_degrees: float
+    foveal_pixels_per_degree: float
+    image_pixels_per_degree: float
     estimated_overview_crop_pixel_reduction: float
     estimated_foveated_detail_reduction: float
 
@@ -27,6 +36,8 @@ def process_image(
     output_dir: Path,
     low_res_width: int = 320,
     focus_fraction: float = 0.10,
+    horizontal_fov_degrees: float = DEFAULT_HORIZONTAL_FOV_DEGREES,
+    foveal_pixels_per_degree: float = FOVEAL_PIXELS_PER_DEGREE,
 ) -> FocusResult:
     """Create low-res, crop, foveated, and debug versions of an image."""
 
@@ -47,7 +58,12 @@ def process_image(
     )
 
     crop = _crop_box(image, focus_box)
-    foveated_image, foveated_detail_budget = _build_foveated_image(image, focus_box)
+    foveated_image, foveated_detail_budget = _build_foveated_image(
+        image=image,
+        focus_box=focus_box,
+        horizontal_fov_degrees=horizontal_fov_degrees,
+        foveal_pixels_per_degree=foveal_pixels_per_degree,
+    )
     debug_image = _draw_focus_box(image, focus_box)
 
     low_res_path = output_dir / "low_res_overview.jpg"
@@ -62,6 +78,7 @@ def process_image(
 
     low_h, low_w = low_res.shape[:2]
     original_pixels = width * height
+    image_pixels_per_degree = width / horizontal_fov_degrees
     transmitted_pixels = (low_w * low_h) + (crop.shape[1] * crop.shape[0])
     estimated_overview_crop_pixel_reduction = original_pixels / transmitted_pixels
     estimated_foveated_detail_reduction = original_pixels / foveated_detail_budget
@@ -74,6 +91,9 @@ def process_image(
         focus_box=focus_box,
         original_size=(width, height),
         low_res_size=(low_w, low_h),
+        horizontal_fov_degrees=horizontal_fov_degrees,
+        foveal_pixels_per_degree=foveal_pixels_per_degree,
+        image_pixels_per_degree=image_pixels_per_degree,
         estimated_overview_crop_pixel_reduction=estimated_overview_crop_pixel_reduction,
         estimated_foveated_detail_reduction=estimated_foveated_detail_reduction,
     )
@@ -153,40 +173,55 @@ def _crop_box(image: np.ndarray, box: tuple[int, int, int, int]) -> np.ndarray:
 def _build_foveated_image(
     image: np.ndarray,
     focus_box: tuple[int, int, int, int],
+    horizontal_fov_degrees: float,
+    foveal_pixels_per_degree: float,
 ) -> tuple[np.ndarray, float]:
     """Keep the focus area sharp while lowering detail farther from the center."""
+
+    if horizontal_fov_degrees <= 0:
+        raise ValueError("horizontal_fov_degrees must be greater than 0")
+    if foveal_pixels_per_degree <= 0:
+        raise ValueError("foveal_pixels_per_degree must be greater than 0")
 
     height, width = image.shape[:2]
     left, top, right, bottom = focus_box
     center_x = (left + right) // 2
     center_y = (top + bottom) // 2
 
+    pixels_per_degree = width / horizontal_fov_degrees
     y_coords, x_coords = np.ogrid[:height, :width]
-    distance = np.sqrt((x_coords - center_x) ** 2 + (y_coords - center_y) ** 2)
-    max_distance = np.sqrt(max(center_x, width - center_x) ** 2 + max(center_y, height - center_y) ** 2)
-    normalized_distance = distance / max(max_distance, 1)
+    pixel_distance = np.sqrt((x_coords - center_x) ** 2 + (y_coords - center_y) ** 2)
+    eccentricity_degrees = pixel_distance / pixels_per_degree
+    acuity_ratio = _acuity_ratio_from_eccentricity(eccentricity_degrees)
+    target_pixels_per_degree = foveal_pixels_per_degree * acuity_ratio
+    scale_map = np.clip(target_pixels_per_degree / pixels_per_degree, 0.0625, 1.0)
 
-    medium_detail = _downsample_then_restore(image, scale=0.50)
-    low_detail = _downsample_then_restore(image, scale=0.25)
-    peripheral_detail = _downsample_then_restore(image, scale=0.125)
+    half_detail = _downsample_then_restore(image, scale=0.50)
+    quarter_detail = _downsample_then_restore(image, scale=0.25)
+    eighth_detail = _downsample_then_restore(image, scale=0.125)
+    sixteenth_detail = _downsample_then_restore(image, scale=0.0625)
 
-    medium_mask = normalized_distance > 0.18
-    low_mask = normalized_distance > 0.38
-    peripheral_mask = normalized_distance > 0.65
+    half_mask = scale_map < 0.75
+    quarter_mask = scale_map < 0.375
+    eighth_mask = scale_map < 0.1875
+    sixteenth_mask = scale_map < 0.09375
 
     foveated = image.copy()
-    foveated[medium_mask] = medium_detail[medium_mask]
-    foveated[low_mask] = low_detail[low_mask]
-    foveated[peripheral_mask] = peripheral_detail[peripheral_mask]
+    foveated[half_mask] = half_detail[half_mask]
+    foveated[quarter_mask] = quarter_detail[quarter_mask]
+    foveated[eighth_mask] = eighth_detail[eighth_mask]
+    foveated[sixteenth_mask] = sixteenth_detail[sixteenth_mask]
 
-    # Estimate the amount of visual detail retained, where downsampling to 50%
-    # width and height is treated as keeping roughly 25% of original detail.
-    detail_weights = np.ones((height, width), dtype=np.float32)
-    detail_weights[medium_mask] = 0.50**2
-    detail_weights[low_mask] = 0.25**2
-    detail_weights[peripheral_mask] = 0.125**2
+    detail_weights = scale_map**2
     detail_budget = float(detail_weights.sum())
     return foveated, detail_budget
+
+
+def _acuity_ratio_from_eccentricity(eccentricity_degrees: np.ndarray) -> np.ndarray:
+    """Approximate human acuity falloff as distance from gaze increases."""
+
+    effective_eccentricity = np.maximum(0, eccentricity_degrees - FOVEAL_ACUITY_RADIUS_DEGREES)
+    return ACUITY_E2_DEGREES / (ACUITY_E2_DEGREES + effective_eccentricity)
 
 
 def _downsample_then_restore(image: np.ndarray, scale: float) -> np.ndarray:

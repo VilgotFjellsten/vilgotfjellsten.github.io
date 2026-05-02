@@ -22,6 +22,7 @@ main.py                  Starts the command-line program
 requirements.txt         Python packages this project needs
 vision_focus/cli.py      Handles terminal commands and options
 vision_focus/pipeline.py Core image-processing logic
+docs/human-vision-baseline.md Researched starting numbers for eye-like resolution
 docs/product-notes.md    Product and patent-thinking notes
 ```
 
@@ -82,6 +83,22 @@ python3 main.py path/to/image.jpg --focus-fraction 0.10
 
 `0.10` means 10% of the original image area.
 
+You can also change the assumed camera/view width in visual degrees:
+
+```bash
+python3 main.py path/to/image.jpg --field-of-view-degrees 90
+```
+
+The default is `90`, meaning the full image width is treated as about 90 degrees of visual field. A phone camera or wide webcam may be around this range, but different lenses need different values.
+
+You can change the sharpest foveal resolution target:
+
+```bash
+python3 main.py path/to/image.jpg --foveal-ppd 94
+```
+
+`ppd` means pixels per degree. The prototype starts with `94` because recent display/vision research measured about 94 pixels per degree for sharp foveal black-white detail. A more conservative older 20/20 estimate is about 60 pixels per degree.
+
 ## What this prototype is not yet
 
 This is not yet a finished AI product. It does not call a large AI model yet.
@@ -103,9 +120,9 @@ The crop output is useful for testing, but the foveated output is closer to how 
 Instead of hiding the rest of the image, the prototype keeps the full scene visible and reduces detail with distance from the focus center:
 
 ```text
-focus center: highest detail
-middle area: medium detail
-outer area: lowest detail
+0-2 degrees from focus: highest detail
+farther away: progressively lower detail
+periphery: much lower detail
 ```
 
 This may be a better input for a main AI model because it keeps context while reducing unnecessary visual detail.

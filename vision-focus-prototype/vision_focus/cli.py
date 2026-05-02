@@ -32,6 +32,18 @@ def main() -> None:
         default=0.10,
         help="Fraction of the original image area to keep as a high-res crop.",
     )
+    parser.add_argument(
+        "--horizontal-fov-degrees",
+        type=float,
+        default=90.0,
+        help="Assumed horizontal field of view represented by the image.",
+    )
+    parser.add_argument(
+        "--foveal-pixels-per-degree",
+        type=float,
+        default=94.0,
+        help="Highest-detail target near the focus point, in pixels per visual degree.",
+    )
 
     args = parser.parse_args()
     result = process_image(
@@ -39,11 +51,15 @@ def main() -> None:
         output_dir=args.output_dir,
         low_res_width=args.low_res_width,
         focus_fraction=args.focus_fraction,
+        horizontal_fov_degrees=args.horizontal_fov_degrees,
+        foveal_pixels_per_degree=args.foveal_pixels_per_degree,
     )
 
     print("Focus processing complete.")
     print(f"Original size: {result.original_size[0]}x{result.original_size[1]}")
     print(f"Low-res size: {result.low_res_size[0]}x{result.low_res_size[1]}")
+    print(f"Assumed horizontal field of view: {result.horizontal_fov_degrees:.1f} degrees")
+    print(f"Foveal target: {result.foveal_pixels_per_degree:.1f} pixels per degree")
     print(f"Focus box: {result.focus_box}")
     print(
         "Overview-plus-crop pixel reduction: "

@@ -27,6 +27,19 @@ input image
   -> debug image showing what was selected
 ```
 
+## Current foveation starting point
+
+The prototype now uses the researched human-vision baseline in `docs/human-vision-baseline.md`.
+
+Current default assumptions:
+
+- the input image represents about `90` degrees of horizontal view
+- foveal clarity is modeled at `94` pixels per degree
+- the detail falloff follows a simple acuity curve: `relative acuity = 2 / (2 + eccentricity_degrees)`
+- output detail is quantized into practical layers: `1.0`, `0.5`, `0.25`, and `0.125`
+
+These are not final product numbers. They are a starting point for testing whether eye-like compression is useful for AI input.
+
 ## What must be tested later
 
 - Does the method reduce input size enough to matter?
