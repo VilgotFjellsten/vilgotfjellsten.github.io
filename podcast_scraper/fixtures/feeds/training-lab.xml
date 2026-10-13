@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Training Lab Podcast</title>
+    <link>https://example-fixtures.local/sites/training-lab</link>
+    <description>Strength, conditioning, and recovery for busy athletes.</description>
+    <itunes:author>Sam Peak</itunes:author>
+    <itunes:owner>
+      <itunes:name>Sam Peak</itunes:name>
+      <itunes:email>sam@traininglab.example</itunes:email>
+    </itunes:owner>
+    <itunes:category text="Health &amp; Fitness">
+      <itunes:category text="Fitness"/>
+    </itunes:category>
+    <item>
+      <title>Zone 2 Without Boredom</title>
+      <pubDate>Fri, 10 Oct 2025 12:00:00 GMT</pubDate>
+      <guid>tl-40</guid>
+    </item>
+  </channel>
+</rss>

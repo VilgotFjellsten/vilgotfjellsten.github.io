@@ -1,0 +1,72 @@
+[
+  {
+    "title": "Sleep Science Weekly",
+    "rss_url": "https://example-fixtures.local/feeds/sleep-science.xml",
+    "apple_id": "100001",
+    "podcast_index_id": 9001,
+    "categories": ["Health & Fitness", "Mental Health"],
+    "author": "Dr. Ava Rest",
+    "website": "https://example-fixtures.local/sites/sleep-science",
+    "description": "Evidence-based sleep research for clinicians and curious listeners.",
+    "source": "fixture",
+    "source_urls": ["fixture:sleep-science"],
+    "platforms": ["Podcast Index", "Apple"],
+    "sub_niche": "sleep"
+  },
+  {
+    "title": "The Nutrition Desk",
+    "rss_url": "https://example-fixtures.local/feeds/nutrition-desk.xml",
+    "apple_id": "100002",
+    "podcast_index_id": 9002,
+    "categories": ["Health & Fitness", "Nutrition"],
+    "author": "Jordan Kale",
+    "website": "https://example-fixtures.local/sites/nutrition-desk",
+    "description": "Practical nutrition conversations without the hype.",
+    "source": "fixture",
+    "source_urls": ["fixture:nutrition-desk"],
+    "platforms": ["Podcast Index", "Apple"],
+    "sub_niche": "food"
+  },
+  {
+    "title": "Training Lab Podcast",
+    "rss_url": "https://example-fixtures.local/feeds/training-lab.xml",
+    "apple_id": "100003",
+    "podcast_index_id": 9003,
+    "categories": ["Health & Fitness", "Fitness"],
+    "author": "Sam Peak",
+    "website": "https://example-fixtures.local/sites/training-lab",
+    "description": "Strength, conditioning, and recovery for busy athletes.",
+    "source": "fixture",
+    "source_urls": ["fixture:training-lab", "apple:chart:1514"],
+    "platforms": ["Apple", "Podcast Index"],
+    "sub_niche": "training"
+  },
+  {
+    "title": "Training Lab Podcast",
+    "rss_url": "https://example-fixtures.local/feeds/training-lab.xml",
+    "apple_id": "100003",
+    "podcast_index_id": 9003,
+    "categories": ["Fitness"],
+    "author": "Sam Peak",
+    "website": "https://example-fixtures.local/sites/training-lab",
+    "description": "Duplicate listing from Apple gap-fill (same RSS).",
+    "source": "fixture",
+    "source_urls": ["fixture:training-lab-dup"],
+    "platforms": ["Apple"],
+    "sub_niche": "training"
+  },
+  {
+    "title": "Thin Contact Wellness",
+    "rss_url": "https://example-fixtures.local/feeds/thin-contact.xml",
+    "apple_id": "100004",
+    "podcast_index_id": 9004,
+    "categories": ["Health"],
+    "author": "Casey Bright",
+    "website": "https://example-fixtures.local/sites/thin-contact",
+    "description": "A wellness show whose RSS omits itunes:owner email.",
+    "source": "fixture",
+    "source_urls": ["fixture:thin-contact"],
+    "platforms": ["Podcast Index"],
+    "sub_niche": ""
+  }
+]

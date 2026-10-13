@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Thin Contact Wellness</title>
+    <link>https://example-fixtures.local/sites/thin-contact</link>
+    <description>A wellness show whose RSS omits itunes:owner email.</description>
+    <itunes:author>Casey Bright</itunes:author>
+    <itunes:category text="Health"/>
+    <item>
+      <title>Breathing Basics</title>
+      <pubDate>Tue, 02 Sep 2025 09:00:00 GMT</pubDate>
+      <guid>tc-3</guid>
+    </item>
+  </channel>
+</rss>
