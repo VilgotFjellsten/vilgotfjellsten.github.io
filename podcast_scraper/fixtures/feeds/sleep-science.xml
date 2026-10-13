@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Sleep Science Weekly</title>
+    <link>https://example-fixtures.local/sites/sleep-science</link>
+    <description>Evidence-based sleep research for clinicians and curious listeners.</description>
+    <language>en-us</language>
+    <itunes:author>Dr. Ava Rest</itunes:author>
+    <itunes:owner>
+      <itunes:name>Dr. Ava Rest</itunes:name>
+      <itunes:email>ava.rest@sleepscience.example</itunes:email>
+    </itunes:owner>
+    <itunes:category text="Health &amp; Fitness">
+      <itunes:category text="Mental Health"/>
+    </itunes:category>
+    <item>
+      <title>Episode 12: Melatonin Myths</title>
+      <pubDate>Mon, 01 Sep 2025 10:00:00 GMT</pubDate>
+      <guid>ssw-12</guid>
+    </item>
+  </channel>
+</rss>

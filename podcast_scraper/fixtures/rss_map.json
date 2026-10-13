@@ -1,0 +1,6 @@
+{
+  "https://example-fixtures.local/feeds/sleep-science.xml": "feeds/sleep-science.xml",
+  "https://example-fixtures.local/feeds/nutrition-desk.xml": "feeds/nutrition-desk.xml",
+  "https://example-fixtures.local/feeds/training-lab.xml": "feeds/training-lab.xml",
+  "https://example-fixtures.local/feeds/thin-contact.xml": "feeds/thin-contact.xml"
+}
